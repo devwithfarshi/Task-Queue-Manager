@@ -42,6 +42,8 @@ app.get('/', (_, res) => {
   )
 })
 
+// routes
+
 // error handlers
 app.use(notFoundHandler)
 app.use(errorHandler)
