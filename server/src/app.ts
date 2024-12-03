@@ -1,14 +1,14 @@
-import express from 'express'
+import cookieParser from 'cookie-parser'
 import cors from 'cors'
+import express from 'express'
+import mongoSanitize from 'express-mongo-sanitize'
+import rateLimit from 'express-rate-limit'
+import helmet from 'helmet'
+import hpp from 'hpp'
 import { StatusCodes } from 'http-status-codes'
 import morgan from 'morgan'
-import helmet from 'helmet'
-import rateLimit from 'express-rate-limit'
-import mongoSanitize from 'express-mongo-sanitize'
-import hpp from 'hpp'
-import cookieParser from 'cookie-parser'
-import { errorHandler, notFoundHandler } from './utils/errorHandlers'
 import ApiResponse from './utils/ApiResponse'
+import { errorHandler, notFoundHandler } from './utils/errorHandlers'
 
 const app = express()
 
@@ -31,7 +31,18 @@ const allMiddleware = [
 app.use(allMiddleware)
 
 // base route
-app.get('/', (_, res) => {
+app.get(`/`, (_, res) => {
+  res.status(StatusCodes.OK).json(
+    new ApiResponse(StatusCodes.OK, {
+      message: 'Welcome to the Task Queue Manager API😀',
+      status: 'Success✅',
+      server_status: 'Working🆙',
+      server_time: `${new Date().toLocaleString()}⌛`
+    })
+  )
+})
+
+app.get('/api/v1', (_, res) => {
   res.status(StatusCodes.OK).json(
     new ApiResponse(StatusCodes.OK, {
       message: 'Welcome to the Task Queue Manager API😀',
@@ -43,6 +54,8 @@ app.get('/', (_, res) => {
 })
 
 // routes
+import userRouter from './modules/user/userRoutes'
+app.use(`/api/v1/auth`, userRouter)
 
 // error handlers
 app.use(notFoundHandler)

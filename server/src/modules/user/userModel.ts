@@ -9,8 +9,7 @@ const userSchema: Schema = new Schema<IUser>(
       type: String,
       enum: ['admin', 'user', 'moderator'],
       default: 'user'
-    },
-    tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }]
+    }
   },
   { timestamps: true }
 )

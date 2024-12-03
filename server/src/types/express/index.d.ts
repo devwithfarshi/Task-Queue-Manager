@@ -10,7 +10,13 @@ export type IFile = {
 declare global {
   namespace Express {
     type Request = {
-      files: IFile
+      files?: IFile
     }
+  }
+}
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: IUser
   }
 }

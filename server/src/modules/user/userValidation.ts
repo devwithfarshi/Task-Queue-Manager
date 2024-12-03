@@ -1,12 +1,14 @@
 import { z } from 'zod'
 
-export const userRegistrationSchema = z.object({
-  username: z.string(),
+const userRegistrationSchema = z.object({
+  username: z.string().trim().min(3),
   email: z.string().email(),
   password: z.string().min(8)
 })
 
-export const userLoginSchema = z.object({
-  username: z.string(),
+const userLoginSchema = z.object({
+  email: z.string().email(),
   password: z.string().min(8)
 })
+
+export default { userRegistrationSchema, userLoginSchema }
