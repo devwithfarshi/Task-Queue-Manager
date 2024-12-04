@@ -5,6 +5,7 @@
   "scripts": {
     "start": "tsc && node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "worker:dev": "ts-node-dev --respawn --transpile-only src/Queues/queueWorker.ts",
     "format": "prettier --write .",
     "lint": "eslint . ",
     "lint:fix": "eslint . --fix",
@@ -17,7 +18,7 @@
   "description": "",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "bullmq": "^5.30.0",
+    "bullmq": "^5.31.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

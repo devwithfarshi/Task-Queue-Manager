@@ -54,4 +54,11 @@ router.get(
   taskController.getTasks
 )
 
+router.get(
+  '/queue/status',
+  authenticate,
+  adminRequired,
+  taskController.getTaskQueueStatus
+)
+
 export default router

@@ -4,6 +4,7 @@ import taskService from './taskService'
 import ApiError from '../../utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 import ApiResponse from '../../utils/ApiResponse'
+import { taskQueue } from '../../Queues/queueServices'
 
 const createTask: RequestHandler = catchAsync(async (req, res) => {
   const task = await taskService.createTask({
@@ -14,7 +15,9 @@ const createTask: RequestHandler = catchAsync(async (req, res) => {
   if (!task) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Task not created')
   }
-  // TODO: add task to queue
+  await taskQueue.add('task', {
+    taskId: task._id.toString()
+  })
   res
     .status(StatusCodes.CREATED)
     .json(
@@ -61,7 +64,7 @@ const updateTask: RequestHandler = catchAsync(async (req, res) => {
 const cancelTaskStatus: RequestHandler = catchAsync(async (req, res) => {
   const task = await taskService.getTaskById(req.params.id)
 
-  if (!task) {
+  if (!task || !task._id) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Task not found')
   }
 
@@ -75,6 +78,8 @@ const cancelTaskStatus: RequestHandler = catchAsync(async (req, res) => {
   if (task.status === 'canceled') {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'This task is already canceled')
   }
+
+  await taskQueue.remove(task._id.toString())
 
   task.status = 'canceled'
 
@@ -104,6 +109,13 @@ const deleteTask: RequestHandler = catchAsync(async (req, res) => {
     .json(new ApiResponse(StatusCodes.OK, task, 'Task deleted successfully'))
 })
 
+const getTaskQueueStatus: RequestHandler = catchAsync(async (req, res) => {
+  const counts = await taskQueue.getJobCounts()
+  res
+    .status(StatusCodes.OK)
+    .json(new ApiResponse(StatusCodes.OK, counts, 'Task Queue Status'))
+})
+
 export default {
   createTask,
   getTasks,
@@ -111,5 +123,6 @@ export default {
   updateTask,
   deleteTask,
   getTasksByUserId,
-  cancelTaskStatus
+  cancelTaskStatus,
+  getTaskQueueStatus
 }
