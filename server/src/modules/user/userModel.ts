@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose'
+import { USER_ROLE } from '../../config/constant'
 
 const userSchema: Schema = new Schema<IUser>(
   {
@@ -7,7 +8,7 @@ const userSchema: Schema = new Schema<IUser>(
     password: { type: String, required: true },
     role: {
       type: String,
-      enum: ['admin', 'user', 'moderator'],
+      enum: USER_ROLE,
       default: 'user'
     }
   },

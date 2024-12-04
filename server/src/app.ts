@@ -55,7 +55,9 @@ app.get('/api/v1', (_, res) => {
 
 // routes
 import userRouter from './modules/user/userRoutes'
+import taskRouter from './modules/task/taskRoutes'
 app.use(`/api/v1/auth`, userRouter)
+app.use(`/api/v1/task`, taskRouter)
 
 // error handlers
 app.use(notFoundHandler)

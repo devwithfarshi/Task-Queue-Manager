@@ -62,7 +62,7 @@ const signInUser = async (
     data.username?.length > 0
       ? { username: data.username }
       : { email: data.email }
-  ).select('+password -__v -createdAt -updatedAt')
+  ).select('+password')
 
   if (!user) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'Credentials not match')

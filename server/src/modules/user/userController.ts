@@ -38,6 +38,7 @@ const userSignIn: RequestHandler = catchAsync(async (req, res) => {
 
   res
     .status(StatusCodes.OK)
+    .cookie('token', accessToken)
     .json(
       new ApiResponse(
         StatusCodes.OK,

@@ -1,27 +1,28 @@
+import mongoose from 'mongoose'
+import { T_TASK_PRIORITY, T_TASK_STATUS, T_USER_ROLE } from '../config/constant'
+
 declare global {
-  type UserRole = 'admin' | 'user' | 'moderator'
-
-  type TaskStatus = 'pending' | 'in-progress' | 'completed' | 'failed'
-
   interface IUser {
     _id?: string
     username: string
     email: string
     password: string
-    role: UserRole
+    role: T_USER_ROLE
     createdAt?: Date
     updatedAt?: Date
   }
 
   interface ITask {
-    _id: string
+    _id?: mongoose.Types.ObjectId | string
     title: string
     description: string
-    status: TaskStatus
+    status: T_TASK_STATUS
+    priority: T_TASK_PRIORITY
     dueDate: Date
-    createdAt: Date
-    updatedAt: Date
-    userId: IUser['_id']
+    createdAt?: Date
+    updatedAt?: Date
+    userId?: IUser['_id']
+    priority: 'low' | 'medium' | 'high'
   }
 }
 
