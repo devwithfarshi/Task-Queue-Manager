@@ -1,4 +1,6 @@
+import { Button } from "@/components/ui/button";
+
 const App = () => {
-  return <div>Task Queue Manager</div>;
+  return <div></div>;
 };
 export default App;

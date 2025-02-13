@@ -1,6 +1,7 @@
 import { Worker } from 'bullmq'
 import 'dotenv/config'
 import TaskModel from '../modules/task/taskModel'
+import redisConnection from '../config/redisConfig'
 
 const worker = new Worker(
   'task-queue',
@@ -20,10 +21,7 @@ const worker = new Worker(
     console.log('Completed job', job.id)
   },
   {
-    connection: {
-      host: process.env.REDIS_HOST,
-      port: parseInt(process.env.REDIS_PORT!)
-    }
+    connection: redisConnection
   }
 )
 

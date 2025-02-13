@@ -24,6 +24,17 @@ declare global {
     userId?: IUser['_id']
     priority: 'low' | 'medium' | 'high'
   }
+  interface IEmailTask {
+    _id?: mongoose.Types.ObjectId | string
+    email: string
+    subject: string
+    message: string
+    howMuchMessage: number
+    status: T_TASK_STATUS
+    userId?: IUser['_id']
+    createdAt?: Date
+    updatedAt?: Date
+  }
 }
 
 export {}

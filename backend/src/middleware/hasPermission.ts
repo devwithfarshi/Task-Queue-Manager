@@ -11,7 +11,7 @@ const hasPermission =
         return next(
           new ApiError(
             StatusCodes.UNAUTHORIZED,
-            'Access denied. You are not allowed to view other user tasks'
+            'Access denied. You are not allowed to perform this action'
           )
         )
       }
