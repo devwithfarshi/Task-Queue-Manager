@@ -10,6 +10,11 @@ declare global {
     role: T_USER_ROLE
     createdAt?: Date
     updatedAt?: Date
+    isEmailVerified: boolean
+    emailVerificationToken?: string
+    emailVerificationExpiry?: Date
+    passwordResetToken?: string
+    passwordResetExpiry?: Date
   }
 
   interface ITask {

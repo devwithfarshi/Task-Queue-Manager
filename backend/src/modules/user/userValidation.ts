@@ -15,5 +15,17 @@ const userLoginSchema = z
     message: 'required',
     path: ['email']
   })
+const forgotPasswordSchema = z.object({
+  email: z.string().email()
+})
 
-export default { userRegistrationSchema, userLoginSchema }
+const resetPasswordSchema = z.object({
+  token: z.string(),
+  newPassword: z.string().min(8)
+})
+export default {
+  userRegistrationSchema,
+  userLoginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema
+}

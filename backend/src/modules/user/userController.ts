@@ -1,10 +1,10 @@
+import { RequestHandler } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '../../utils/ApiError'
 import ApiResponse from '../../utils/ApiResponse'
 import catchAsync from '../../utils/catchAsync'
-import userServices from './userServices'
-import { RequestHandler } from 'express'
 import { generateAccessToken } from '../../utils/jwtToken'
+import userServices from './userServices'
 
 const createUser: RequestHandler = catchAsync(async (req, res) => {
   const user = await userServices.createUser(req.body)
@@ -14,13 +14,14 @@ const createUser: RequestHandler = catchAsync(async (req, res) => {
       'Something went wrong'
     )
   }
+
   res
     .status(StatusCodes.CREATED)
     .json(
       new ApiResponse(
         StatusCodes.CREATED,
         { _id: user._id },
-        'User created successfully'
+        'Account created successfully, please verify your email'
       )
     )
 })
@@ -62,8 +63,41 @@ const me: RequestHandler = catchAsync(async (req, res) => {
     .json(new ApiResponse(StatusCodes.OK, user, 'User profile'))
 })
 
+const verifyEmail: RequestHandler = catchAsync(async (req, res) => {
+  const user = await userServices.verifyEmail(req.params.token)
+  if (!user || user === null) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found')
+  }
+
+  res
+    .status(StatusCodes.OK)
+    .json(new ApiResponse(StatusCodes.OK, null, 'Email verified successfully'))
+})
+const forgotPassword: RequestHandler = catchAsync(async (req, res) => {
+  const user = await userServices.forgotPassword(req.body.email)
+  if (!user || user === null) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found')
+  }
+
+  res
+    .status(StatusCodes.OK)
+    .json(new ApiResponse(StatusCodes.OK, null, 'Password reset link sent'))
+})
+const resetPassword: RequestHandler = catchAsync(async (req, res) => {
+  const user = await userServices.resetPassword(req.body)
+  if (!user || user === null) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'User not found')
+  }
+
+  res
+    .status(StatusCodes.OK)
+    .json(new ApiResponse(StatusCodes.OK, null, 'Password reset successfully'))
+})
 export default {
   createUser,
   userSignIn,
-  me
+  me,
+  verifyEmail,
+  forgotPassword,
+  resetPassword
 }

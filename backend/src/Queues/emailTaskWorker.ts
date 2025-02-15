@@ -1,11 +1,8 @@
 import { Worker } from 'bullmq'
 import 'dotenv/config'
-import fs from 'fs'
-import path from 'path'
-import transporter from '../config/email'
-import Handlebars from 'handlebars'
 import redisConnection from '../config/redisConfig'
 import EmailTaskModel from '../modules/emailTask/emailTask.model'
+import sendEmail from '../utils/sendEmail'
 const worker = new Worker<{ taskId: string }>(
   'email-task-queue',
   async (job) => {
@@ -16,18 +13,10 @@ const worker = new Worker<{ taskId: string }>(
     }
     emailTask.status = 'in-progress'
     await emailTask.save()
-    const templatePath = path.join(__dirname, '../templates', `emailTask.html`)
-    const source = fs.readFileSync(templatePath, 'utf8')
-    const template = Handlebars.compile(source)
-    const html = template({ message: emailTask.message })
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: emailTask.email,
-      subject: emailTask.subject,
-      html
-    }
     for (let i = 0; i < emailTask.howMuchMessage; i++) {
-      await transporter.sendMail(mailOptions)
+      await sendEmail(emailTask.email, emailTask.subject, 'emailTask', {
+        message: emailTask.message
+      })
       if (i < emailTask.howMuchMessage - 1) {
         await new Promise((resolve) => setTimeout(resolve, 3000))
       }

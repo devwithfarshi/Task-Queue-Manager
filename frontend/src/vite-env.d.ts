@@ -28,3 +28,21 @@ interface ITask {
   userId?: IUser["_id"];
   priority: "low" | "medium" | "high";
 }
+interface IEmailTask {
+  _id?: string;
+  email: string;
+  subject: string;
+  message: string;
+  howMuchMessage: number;
+  status?: T_TASK_STATUS;
+  userId?: IUser["_id"];
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message: string;
+  statusCode: number;
+}
