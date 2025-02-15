@@ -1,11 +1,11 @@
 import { RequestHandler } from 'express'
-import catchAsync from '../../utils/catchAsync'
-import taskService from './taskService'
-import ApiError from '../../utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
-import ApiResponse from '../../utils/ApiResponse'
 import { taskQueue } from '../../Queues/queueServices'
 import '../../Queues/queueWorker'
+import ApiError from '../../utils/ApiError'
+import ApiResponse from '../../utils/ApiResponse'
+import catchAsync from '../../utils/catchAsync'
+import taskService from './taskService'
 
 const createTask: RequestHandler = catchAsync(async (req, res) => {
   const task = await taskService.createTask({
