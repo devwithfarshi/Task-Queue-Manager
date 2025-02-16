@@ -9,11 +9,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import AuthServices from "@/services/AuthServices";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import * as z from "zod";
 
 const schema = z
@@ -42,12 +44,26 @@ const Register = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(schema),
   });
 
   const onSubmit = async (data: RegisterFormValues) => {
-    console.log("Form Data:", data);
+    try {
+      const response = await AuthServices.register(data);
+      if (response.success) {
+        reset();
+        toast.success(response.message);
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error: any) {
+      console.log(`Error while registering: `, error);
+      toast.error(
+        error.response.data.message || error.message || "Registration failed."
+      );
+    }
   };
 
   return (

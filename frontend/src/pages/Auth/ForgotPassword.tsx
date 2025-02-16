@@ -9,12 +9,40 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
-import { useState } from "react";
+import AuthServices from "@/services/AuthServices";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const ForgotPassword = () => {
-  const [otpSent, setOtpSent] = useState(false);
-
+  const navigate = useNavigate();
+  const {
+    register,
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    reset,
+  } = useForm({
+    defaultValues: {
+      email: "",
+    },
+  });
+  const onSubmit = async (data: { email: string }) => {
+    try {
+      const response = await AuthServices.forgotPassword(data.email);
+      if (response.success) {
+        toast.success(response.message);
+        reset();
+        navigate("/reset-password");
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error: any) {
+      console.log(`Error while new password set: `, error);
+      toast.error(
+        error.response.data.message || error.message || "Registration failed."
+      );
+    }
+  };
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
@@ -27,7 +55,7 @@ const ForgotPassword = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-6">
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
@@ -36,25 +64,23 @@ const ForgotPassword = () => {
                       type="email"
                       placeholder="m@example.com"
                       required
+                      {...register("email", {
+                        required: "Email is required",
+                      })}
                     />
+                    {errors.email && (
+                      <p className="text-red-500 text-sm">
+                        {errors.email.message}
+                      </p>
+                    )}
                   </div>
-                  {otpSent && (
-                    <div className="grid gap-2">
-                      <Label htmlFor="otp">Enter OTP</Label>
-                      <Input
-                        id="otp"
-                        type="text"
-                        placeholder="Enter OTP"
-                        required
-                      />
-                    </div>
-                  )}
+
                   <Button
-                    type="button"
+                    type="submit"
                     className="w-full"
-                    onClick={() => setOtpSent(true)}
+                    disabled={isSubmitting}
                   >
-                    {otpSent ? "Verify OTP" : "Send OTP"}
+                    {isSubmitting ? "Sending OTP..." : "Send OTP"}
                   </Button>
                 </div>
                 <div className="mt-4 text-center text-sm">

@@ -9,10 +9,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import AuthServices from "@/services/AuthServices";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -23,13 +25,27 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
+  const navigate = useNavigate();
 
   const onSubmit = async (data: LoginFormValues) => {
-    console.log("Login Data:", data);
+    try {
+      const response = await AuthServices.login(data);
+      if (response.success) {
+        toast.success(response.message);
+        navigate("/");
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error: any) {
+      console.log(`Error while login: `, error);
+      toast.error(
+        error.response.data.message || error.message || "Registration failed."
+      );
+    }
   };
 
   return (
@@ -81,8 +97,12 @@ const Login = () => {
                       </p>
                     )}
                   </div>
-                  <Button type="submit" className="w-full">
-                    Login
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Logging in..." : "Login"}
                   </Button>
                 </div>
                 <div className="mt-4 text-center text-sm">
