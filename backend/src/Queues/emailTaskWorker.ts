@@ -2,6 +2,7 @@ import { Worker } from 'bullmq'
 import 'dotenv/config'
 import redisConnection from '../config/redisConfig'
 import EmailTaskModel from '../modules/emailTask/emailTask.model'
+import { emitTaskStatusUpdate } from '../utils/emitTaskStatusUpdate'
 import sendEmail from '../utils/sendEmail'
 const worker = new Worker<{ taskId: string }>(
   'email-task-queue',
@@ -13,12 +14,17 @@ const worker = new Worker<{ taskId: string }>(
     }
     emailTask.status = 'in-progress'
     await emailTask.save()
+    emitTaskStatusUpdate(
+      emailTask.userId?.toString() || '',
+      emailTask.id,
+      'in-progress'
+    )
     for (let i = 0; i < emailTask.howMuchMessage; i++) {
       await sendEmail(emailTask.email, emailTask.subject, 'emailTask', {
         message: emailTask.message
       })
       if (i < emailTask.howMuchMessage - 1) {
-        await new Promise((resolve) => setTimeout(resolve, 10000))
+        await new Promise((resolve) => setTimeout(resolve, 60000))
       }
     }
   },
@@ -29,14 +35,29 @@ const worker = new Worker<{ taskId: string }>(
 
 worker.on('failed', async (job, err) => {
   console.log(`Email Task ${job?.id} failed with ${err.message}`)
-  await EmailTaskModel.findByIdAndUpdate(job?.data.taskId, {
+  const emailTask = await EmailTaskModel.findByIdAndUpdate(job?.data.taskId, {
     status: 'failed'
   })
+  if (emailTask) {
+    emitTaskStatusUpdate(
+      emailTask.userId?.toString() || '',
+      emailTask.id,
+      'failed'
+    )
+  }
 })
 
 worker.on('completed', async (job) => {
   console.log(`Email Task ${job.id} completed`)
-  await EmailTaskModel.findByIdAndUpdate(job.data.taskId, {
+  const emailTask = await EmailTaskModel.findByIdAndUpdate(job.data.taskId, {
     status: 'completed'
   })
+
+  if (emailTask) {
+    emitTaskStatusUpdate(
+      emailTask.userId?.toString() || '',
+      emailTask.id,
+      'completed'
+    )
+  }
 })

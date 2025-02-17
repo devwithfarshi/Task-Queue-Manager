@@ -36,7 +36,7 @@ declare global {
     message: string
     howMuchMessage: number
     status: T_TASK_STATUS
-    userId?: IUser['_id']
+    userId: IUser['_id']
     createdAt?: Date
     updatedAt?: Date
   }

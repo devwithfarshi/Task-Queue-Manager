@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
+import { io, Socket } from "socket.io-client";
 import { toast } from "sonner";
 import AddNewEmailTask from "./components/screens/AddNewEmailTask";
 import EmailTaskList from "./components/screens/EmailLists";
+import useAuth from "./hooks/use-auth";
 import EmailTaskServices from "./services/EmailTaskServices";
-
 const App = () => {
+  const [socket, setSocket] = useState<Socket | null>(null);
+
   const [tasks, setTasks] = useState<IEmailTask[]>([]);
+  const { user } = useAuth();
 
   const handleSubmit = async (formData: IEmailTask) => {
     try {
@@ -39,6 +43,33 @@ const App = () => {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    const newSocket = io("http://localhost:5000");
+
+    newSocket.on("connect", () => {
+      console.log(`Connected to socket server`);
+      newSocket.emit("authenticate", user?._id);
+    });
+
+    newSocket.on("task-status-update", (data) => {
+      setTasks((prev) => {
+        return prev.map((task) => {
+          if (task._id === data.taskId) {
+            return { ...task, status: data.status };
+          }
+          return task;
+        });
+      });
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.close();
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <div className="container mx-auto py-8 px-4">
