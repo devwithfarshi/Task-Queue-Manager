@@ -50,7 +50,12 @@ const EmailTaskList = ({ tasks }: { tasks: IEmailTask[] }) => {
                 <TableCell>{task.subject}</TableCell>
                 <TableCell>{task.howMuchMessage}</TableCell>
                 <TableCell>
-                  <Badge className={statusColors[task.status as T_TASK_STATUS]}>
+                  <Badge
+                    className={
+                      statusColors[task.status as T_TASK_STATUS] +
+                      " uppercase font-semibold"
+                    }
+                  >
                     {task.status}
                   </Badge>
                 </TableCell>

@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/use-auth";
 import AuthServices from "@/services/AuthServices";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -8,6 +9,12 @@ const VerifyEmail = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { getToken } = useAuth();
+  useEffect(() => {
+    if (getToken()) {
+      navigate("/");
+    }
+  }, []);
   useEffect(() => {
     if (params.get("token")) {
       setLoading(true);

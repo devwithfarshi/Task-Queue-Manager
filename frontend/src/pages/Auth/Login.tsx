@@ -9,12 +9,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import AuthServices from "@/services/AuthServices";
 import { toast } from "sonner";
+import useAuth from "@/hooks/use-auth";
+import { useEffect } from "react";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -30,13 +32,21 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
   });
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login, getToken } = useAuth();
+  useEffect(() => {
+    if (getToken()) {
+      navigate("/");
+    }
+  }, []);
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
       const response = await AuthServices.login(data);
       if (response.success) {
         toast.success(response.message);
-        navigate("/");
+        login(response.data.accessToken);
+        navigate(location.state?.from ? location.state.from : "/");
       } else {
         throw new Error(response.message);
       }

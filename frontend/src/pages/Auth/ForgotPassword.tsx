@@ -8,8 +8,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import useAuth from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import AuthServices from "@/services/AuthServices";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -26,6 +28,12 @@ const ForgotPassword = () => {
       email: "",
     },
   });
+  const { getToken } = useAuth();
+  useEffect(() => {
+    if (getToken()) {
+      navigate("/");
+    }
+  }, []);
   const onSubmit = async (data: { email: string }) => {
     try {
       const response = await AuthServices.forgotPassword(data.email);

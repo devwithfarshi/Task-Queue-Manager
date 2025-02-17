@@ -5,10 +5,11 @@ const createEmailTask = async (data: IEmailTask) => {
 }
 
 const getEmailTasks = async (filter: Partial<IEmailTask> = {}) => {
-  return await EmailTaskModel.find(filter).populate(
-    'userId',
-    'username email role'
-  )
+  return await EmailTaskModel.find(filter)
+    .populate('userId', 'username email role')
+    .sort({
+      createdAt: -1
+    })
 }
 
 const getEmailTaskById = async (id: string): Promise<IEmailTask | null> => {

@@ -15,6 +15,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import AuthServices from "@/services/AuthServices";
+import { useEffect } from "react";
+import useAuth from "@/hooks/use-auth";
 
 const resetPasswordSchema = z.object({
   token: z.string().min(1, "Token is required"),
@@ -32,6 +34,12 @@ const ResetPassword = () => {
     resolver: zodResolver(resetPasswordSchema),
   });
   const navigate = useNavigate();
+  const { getToken } = useAuth();
+  useEffect(() => {
+    if (getToken()) {
+      navigate("/");
+    }
+  }, []);
   const onSubmit = async (data: ResetPasswordFormValues) => {
     try {
       const response = await AuthServices.resetPassword(

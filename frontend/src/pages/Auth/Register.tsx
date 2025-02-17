@@ -8,13 +8,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import useAuth from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import AuthServices from "@/services/AuthServices";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import * as z from "zod";
 
@@ -48,7 +49,14 @@ const Register = () => {
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(schema),
   });
+  const { getToken } = useAuth();
 
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (getToken()) {
+      navigate("/");
+    }
+  }, []);
   const onSubmit = async (data: RegisterFormValues) => {
     try {
       const response = await AuthServices.register(data);

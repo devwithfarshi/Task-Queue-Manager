@@ -5,18 +5,24 @@ import Register from "@/pages/Auth/Register";
 import ForgotPassword from "@/pages/Auth/ForgotPassword";
 import ResetPassword from "@/pages/Auth/ResetPassword";
 import VerifyEmail from "@/pages/Auth/VerifyEmail";
+import RequireAuth from "@/components/Layout/RequireAuth";
+import AuthProvider from "@/context/AuthContext";
 
 const RouterApp = () => {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/verify-email" element={<VerifyEmail />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route element={<RequireAuth />}>
+            <Route path="/" element={<App />} />
+          </Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 };
