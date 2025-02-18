@@ -24,7 +24,7 @@ const worker = new Worker<{ taskId: string }>(
         message: emailTask.message
       })
       if (i < emailTask.howMuchMessage - 1) {
-        await new Promise((resolve) => setTimeout(resolve, 60000))
+        await new Promise((resolve) => setTimeout(resolve, 5000))
       }
     }
   },
