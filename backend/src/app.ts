@@ -25,7 +25,9 @@ const allMiddleware = [
   express.json(),
   express.urlencoded({ extended: true }),
   cookieParser(),
-  cors()
+  cors({
+    origin: process.env.FRONTEND_URL
+  })
 ]
 
 app.use(allMiddleware)

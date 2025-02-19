@@ -3,7 +3,7 @@ const createEmailTask = z.object({
   email: z.string().email(),
   subject: z.string().min(3),
   message: z.string().min(3),
-  howMuchMessage: z.number().int().positive()
+  howMuchMessage: z.number().int().max(10).positive()
 })
 const updateEmailTask = z.object({
   email: z.string().email().optional(),
