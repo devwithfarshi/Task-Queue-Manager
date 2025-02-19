@@ -6,7 +6,7 @@ import EmailTaskList from "./components/screens/EmailLists";
 import useAuth from "./hooks/use-auth";
 import EmailTaskServices from "./services/EmailTaskServices";
 const App = () => {
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [_, setSocket] = useState<Socket | null>(null);
 
   const [tasks, setTasks] = useState<IEmailTask[]>([]);
   const { user } = useAuth();
