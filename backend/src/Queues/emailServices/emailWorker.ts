@@ -1,7 +1,5 @@
 import { Worker } from 'bullmq'
 import 'dotenv/config'
-import fs from 'fs'
-import path from 'path'
 import transporter from '../../config/email'
 import redisConnection from '../../config/redisConfig'
 

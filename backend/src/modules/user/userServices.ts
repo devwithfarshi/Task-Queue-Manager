@@ -130,7 +130,7 @@ const forgotPassword = async (email: string) => {
     })
 
     return user
-  } catch (error) {
+  } catch {
     user.passwordResetToken = undefined
     user.passwordResetExpiry = undefined
     await user.save()
