@@ -1,4 +1,4 @@
-import jwt, { Secret } from 'jsonwebtoken'
+import jwt, { Secret, SignOptions } from 'jsonwebtoken'
 
 export const generateAccessToken = (user: IUser): string => {
   const secret = process.env.ACCESS_TOKEN_SECRET as Secret
@@ -8,7 +8,11 @@ export const generateAccessToken = (user: IUser): string => {
     throw new Error('ACCESS_TOKEN_SECRET is not defined')
   }
 
-  return jwt.sign({ _id: user._id, email: user.email }, secret, { expiresIn })
+  const options: SignOptions = {
+    expiresIn
+  }
+
+  return jwt.sign({ _id: user._id, email: user.email }, secret, options)
 }
 
 export const verifyAccessToken = (
