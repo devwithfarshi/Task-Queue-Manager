@@ -2,7 +2,8 @@ import jwt, { Secret, SignOptions } from 'jsonwebtoken'
 
 export const generateAccessToken = (user: IUser): string => {
   const secret = process.env.ACCESS_TOKEN_SECRET as Secret
-  const expiresIn = process.env.ACCESS_TOKEN_LIFE || '1h'
+  const expiresIn: jwt.SignOptions['expiresIn'] =
+    process.env.ACCESS_TOKEN_LIFE || '1h'
 
   if (!secret) {
     throw new Error('ACCESS_TOKEN_SECRET is not defined')
